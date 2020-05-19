@@ -1,2 +1,51 @@
 # usgs-nccasc-soil-moisture
-This repository contains a project in collaboration with the USGS and NC CASC regarding access to soil moisture from various SCAN stations across the US.
+Tool to examine soil moisture datasets for select Soil Climate Analysis Network soil moisture monitoring stations across the US.
+
+## Purpose of this Code?
+This repository contains a project in collaboration with the USGS and NC CASC regarding access to soil moisture datasets from various Soil Climate Analysis Network (SCAN; https://www.wcc.nrcs.usda.gov/scan/) stations across the US.  These stations are included in the broader national network of soil moisture monitoring stations: the National Soil Moisture Network (NSMN; http://nationalsoilmoisture.com/).
+
+The notebook contained in this repository allows the user to download soil moisture datasets from an input URL an examine them on different timescales (Annual, Monthly, Daily).
+
+## Goals and Motivation
+In-Situ soil moisture data has not been widely incorporated into research and models because of the relative newness of its historical collection.  By creating an easy access tool to examine the data of different timescales, we hope to accomplish two things:
+
+1) Publicly publish this tool so that access to in-situ soil moisture data on different timescales is readily available for environmental condition models (drought, flood, water management, etc.) and is available for use in research going forward.
+
+2) Standardize soil moisture data summarized on a weekly (pentad/decad) timescale for use in comparison to standardized drought model values at each station location.  This can help attest to either the validity or weakness of current drought models that use remote-sensed soil moisture values as an input.
+
+## Running this Workflow
+
+### Basic Overview of Workflow:
+**Input**: 
+* URL(s) to .csv files that contain soil moisture data from SCAN (http://nationalsoilmoisture.com/test/VWC_QAQC/scan/).
+* Name of station associated with each url (Ex. Station 2006 = Bushland)
+
+**Ouput**: 
+Dataframes showing:
+* All soil moisture (SM) data collected at that site over the period of record.
+* Annual mean SM across period of record.
+* Annual mean SM for a specific month across period of record.
+* Monthly mean SM for any year on record.
+* Monthly mean SM across all years over period of record.
+* Daily mean SM for any year on record.
+* Daily mean SM for any given day across period of record.
+
+Plots showing:
+* Annual mean soil moisture across period of record
+* Monthly mean soil moisture for any year on record.
+* Daily mean soil moisture for any year on record.
+
+## Tools and Packages Needed to Run:
+* os
+* matplotlib
+* earthpy
+* pandas
+
+## Files Included in this Repository:
+.gitignore = file detailing python files that we do not want git to track, notably automatically generated files such as .ipynb_checkpoints.
+
+LICENSE = BSD-3 Clause license detailing legal use of this code.
+
+README.md = ReadMe file detailing the purpose and use of this repository.
+
+usgs-nccasc-soil-moisture = .ipynb Jupyter Notebook file containing code to download, import, and process SCAN soil moisture datasets.
