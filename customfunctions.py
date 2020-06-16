@@ -16,48 +16,55 @@ import earthpy.plot as ep
 # In[2]:
 
 
-# Define function to take in a url and output a dataframe into a target dictionary
-def url_to_df(url, station_name, dictionary):
-    """Function that takes a url to a csv file and downloads and 
-    imports the data contained at the url. Then, it changes the station name 
-    in the new dataframe to an input name given (ideally the name of the station),
-    removes any unnecessary columns of data, and changes the month names from int 
-    to str month name format.
+# # Define function to take in a url and output a dataframe into a target dictionary
+# def url_to_df(url, station_name, dictionary):
+#     """Function that takes a url to a csv file and downloads and 
+#     imports the data contained at the url. Then, it changes the station name 
+#     in the new dataframe to an input name given (ideally the name of the station),
+#     removes any unnecessary columns of data, and changes the month names from int 
+#     to str month name format.
 
-        Parameters
-        ----------
-        url : url to csv file
-            Input url to a csv file.
+#         Parameters
+#         ----------
+#         url : url to csv file
+#             Input url to a csv file.
 
-        station_name : str
-            Name of the station for the data being imported and downloaded.
+#         station_name : str
+#             Name of the station for the data being imported and downloaded.
 
-        dictionary : dictionary
-            Empty dictionary for the created dataframes to be exported to.
+#         dictionary : dictionary
+#             Empty dictionary for the created dataframes to be exported to.
 
-        Returns
-        ------
-        No physical return; Returns any newly created dataframes to the input 
-        empty dictionary specified.
-    """
+#         Returns
+#         ------
+#         No physical return; Returns any newly created dataframes to the input 
+#         empty dictionary specified.
+#     """
     
-    path_to_data = os.path.join(et.data.get_data(url=url))
+#     path_to_data = os.path.join(et.data.get_data(url=url))
     
-    dataframe = pd.read_csv(path_to_data)
+#     dataframe = pd.read_csv(path_to_data)
     
-    dataframe['Station ID'] = station_name
+#     dataframe['Station ID'] = station_name
     
-    output_dataframe = dataframe[['Station ID', 'year', 'month', 'day', 'doy',
-                                  'sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']]
+#     output_dataframe = dataframe[['Station ID', 'year', 'month', 'day', 'doy',
+#                                   'sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']]
     
-    output_dataframe['month'].replace({1: "Jan", 2: "Feb", 3: "Mar", 
-                                  4: "Apr", 5: "May", 6: "Jun", 
-                                  7: "Jul", 8: "Aug", 9: "Sep", 
-                                  10: "Oct", 11: "Nov", 12: "Dec"}, 
-                                 inplace=True)
+#     output_dataframe['month'].replace({1: "Jan", 2: "Feb", 3: "Mar", 
+#                                   4: "Apr", 5: "May", 6: "Jun", 
+#                                   7: "Jul", 8: "Aug", 9: "Sep", 
+#                                   10: "Oct", 11: "Nov", 12: "Dec"}, 
+#                                  inplace=True)
     
+#     cut_labels = ['decad0', 'decad1', 'decad2']
+#     cut_bins = [0, 10, 20, 31]
+#     output_dataframe['decad'] = pd.cut(output_dataframe['day'], bins=cut_bins, labels=cut_labels)
     
-    dictionary.update({station_name: output_dataframe})
+#     cut_labels = ['pentad0', 'pentad1', 'pentad2', 'pentad3', 'pentad4', 'pentad5']
+#     cut_bins = [0, 5, 10, 15, 20, 25, 31]
+#     output_dataframe['pentad'] = pd.cut(output_dataframe['day'], bins=cut_bins, labels=cut_labels)
+    
+#     dictionary.update({station_name: output_dataframe})
 
 
 # In[3]:
@@ -460,3 +467,44 @@ def daily_avg_all_years(soil_moisture_dataframe):
     
     return sm_year_daily_all_years
 
+
+# In[13]:
+
+
+def decad_mean(dataframe, year):
+    months_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+    
+    decad_df_year = dataframe[dataframe["year"] == year]
+    
+    decad_func_dataframe = pd.DataFrame()
+
+    for month in months_list:
+        filler_decad_df = decad_df_year[decad_df_year["month"] == month]
+
+        filler_decad_mean_df = filler_decad_df.groupby(["month", "decad"])[["sm_5cm", "sm_10cm", 
+                                                                   "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+
+        decad_func_dataframe = decad_func_dataframe.append(filler_decad_mean_df)
+        
+    return decad_func_dataframe
+
+
+# In[14]:
+
+
+def pentad_mean(dataframe, year):
+    month_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+    
+    pentad_df_year = dataframe[dataframe["year"] == year]
+    
+    pentad_func_dataframe = pd.DataFrame()
+
+    for month in month_list:
+        filler_pentad_df = pentad_df_year[pentad_df_year["month"] == month]
+
+        filler_pentad_mean_df = filler_pentad_df.groupby(["month", "pentad"])[["sm_5cm", "sm_10cm", 
+                                                                   "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+
+        pentad_func_dataframe = pentad_func_dataframe.append(filler_pentad_mean_df)
+        
+    return pentad_func_dataframe
