@@ -15,7 +15,7 @@ In-Situ soil moisture data has not been widely incorporated into research and mo
 
 ## Running this Workflow
 
-### Basic Overview of Workflow:
+### Overview of Workflow:
 **Input**: 
 * URL(s) to .csv files that contain soil moisture data from SCAN (http://nationalsoilmoisture.com/test/VWC_QAQC/scan/).
 * Name of station associated with each url (Ex. Station 2006 = Bushland)
@@ -35,11 +35,21 @@ Plots showing:
 * Monthly mean soil moisture for any year on record.
 * Daily mean soil moisture for any year on record.
 
-## Tools and Packages Needed to Run:
-* os
-* matplotlib
-* earthpy
-* pandas
+### Steps on How to Run This Workflow
+
+1. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to download and install Bash, Git, and Minicoda to your computer (https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/).  Instructions vary based on operating system!
+
+2. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to install and activate an environment titled "earth-analytics-python" for use in running this notebook (https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/).  This ensures that all needed imports and packages are available for use on your computer.
+
+3. Ensure that the environment is activated before proceeding.  This is done by running the line **conda activate earth-analytics-python** in the terminal.
+
+4. Run the line **jupyter notebook** to open the jupyter notebook program.
+
+5. Navigate to the "earth-analytics" folder.
+
+6. Click **New** in the toolbar and select **terminal**
+
+7. In this new terminal, run the line **git clone** followed by the url generated from cloning this repository.  This will place the full repository into your "earth-analytics" folder for use.  Now you are ready to begin running the notebook!
 
 ## Files Included in this Repository:
 .gitignore = file detailing python files that we do not want git to track, notably automatically generated files such as .ipynb_checkpoints.
