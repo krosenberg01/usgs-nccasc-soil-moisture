@@ -51,7 +51,7 @@ Plots showing:
 
 6. Click **New** in the toolbar and select **terminal**
 
-7. In this new terminal, run the line **git clone** followed by the url generated from cloning this repository.  This will place the full repository into your "earth-analytics" folder for use.  Now you are ready to begin running the notebook!
+7. In this new terminal, run the line **cd earth-analytics** to enter into your earth-analytics directory, and then run the line **git clone** followed by the url generated from cloning this repository.  This will place the full repository into your "earth-analytics" folder for use.  Now you are ready to begin running the notebook!
 
 ## Files Included in this Repository:
 .gitignore = file detailing python files that we do not want git to track, notably automatically generated files such as .ipynb_checkpoints.
