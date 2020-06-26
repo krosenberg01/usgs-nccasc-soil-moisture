@@ -29,11 +29,13 @@ Dataframes showing:
 * Monthly mean SM across all years over period of record.
 * Daily mean SM for any year on record.
 * Daily mean SM for any given day across period of record.
+* Z-Score dataframes for each of the above
 
 Plots showing:
 * Annual mean soil moisture across period of record
 * Monthly mean soil moisture for any year on record.
 * Daily mean soil moisture for any year on record.
+* Z-Score plots for each of the above
 
 ### Steps on How to Run This Workflow
 
