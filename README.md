@@ -29,29 +29,38 @@ Dataframes showing:
 * Monthly mean SM across all years over period of record.
 * Daily mean SM for any year on record.
 * Daily mean SM for any given day across period of record.
+* Z-Score dataframes for each of the above
 
 Plots showing:
 * Annual mean soil moisture across period of record
 * Monthly mean soil moisture for any year on record.
 * Daily mean soil moisture for any year on record.
+* Z-Score plots for each of the above
 
 ### Steps on How to Run This Workflow
+
+**Packages needed to run this notebook:
+    * x
+    * y
+    * z
 
 1. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to download and install Bash, Git, and Minicoda to your computer (https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/).  Instructions vary based on operating system!
 
 2. Create an earth-analytics directory on your computer.  This can be done by running the line **mkdir earth-analytics** in your terminal
 
-2. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to install and activate an environment titled "earth-analytics-python" for use in running this notebook (https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/).  This ensures that all needed imports and packages are available for use on your computer.
+3. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to install and activate an environment titled "earth-analytics-python" for use in running this notebook (https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/).  This ensures that all needed imports and packages are available for use on your computer.
 
-3. Ensure that the environment is activated before proceeding.  This is done by running the line **conda activate earth-analytics-python** in the terminal.
+4. Ensure that the environment is activated before proceeding.  This is done by running the line **conda activate earth-analytics-python** in the terminal.
 
-4. Run the line **jupyter notebook** to open the jupyter notebook program.
+5. Update Scipy package to latest version.  This is done by running the line **pip install --user --upgrade scipy**
 
-5. Navigate to the "earth-analytics" folder.
+6. Run the line **jupyter notebook** to open the jupyter notebook program.
 
-6. Click **New** in the toolbar and select **terminal**
+7. Navigate to the "earth-analytics" folder.
 
-7. In this new terminal, run the line **cd earth-analytics** to enter into your earth-analytics directory, and then run the line **git clone** followed by the url generated from cloning this repository.  This will place the full repository into your "earth-analytics" folder for use.  Now you are ready to begin running the notebook!
+8. Click **New** in the toolbar and select **terminal**
+
+9. In this new terminal, run the line **cd earth-analytics** to enter into your earth-analytics directory, and then run the line **git clone** followed by the url generated from cloning this repository.  This will place the full repository into your "earth-analytics" folder for use.  Now you are ready to begin running the notebook!
 
 ## Files Included in this Repository:
 .gitignore = file detailing python files that we do not want git to track, notably automatically generated files such as .ipynb_checkpoints.
