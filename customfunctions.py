@@ -13,6 +13,7 @@ import pandas as pd
 import earthpy.plot as ep
 from scipy import stats
 from scipy.stats import zscore
+import numpy as np
 
 
 # In[2]:
@@ -256,14 +257,27 @@ def plot_daily_avg_sm(dataframe, year, figure_title):
 
 
 def generate_hist(dataframe):
-    dataframe.hist(column='sm_5cm')
-    dataframe.hist(column='sm_10cm')
-    dataframe.hist(column='sm_20cm')
-    dataframe.hist(column='sm_50cm')
-    dataframe.hist(column='sm_100cm')
+    dataframe.hist(column='sm_5cm', bins=50)
+    dataframe.hist(column='sm_10cm', bins=50)
+    dataframe.hist(column='sm_20cm', bins=50)
+    dataframe.hist(column='sm_50cm', bins=50)
+    dataframe.hist(column='sm_100cm', bins=50)
 
 
 # In[7]:
+
+
+def yearly_nan_analysis(dataframe):
+    
+    column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
+    
+    for column in column_names:
+        
+        if not dataframe[column].isna().sum() < 90:
+            dataframe[column] = dataframe[column].where(dataframe[column].isna(), np.nan)
+
+    
+# In[8]:
 
 
 # Function that takes an input dataframe of soil moisture and outputs a dataframe of yearly average SM
@@ -288,26 +302,41 @@ def yearly_avg_sm(soil_moisture_dataframe):
 
     """
     
-    years_list = (1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 
-              2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 
-              2014, 2015, 2016, 2017, 2018, 2019, 2020)
-    
     empty_dataframe = pd.DataFrame()
-    
-    for x in years_list:
-        sm_year = soil_moisture_dataframe[soil_moisture_dataframe["year"] == x]
 
-        sm_year_mean = sm_year.groupby(
-                                ["year"])[["sm_5cm", "sm_10cm", 
-                                           "sm_20cm", "sm_50cm", 
-                                           "sm_100cm"]].mean()
+    years_list = (1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 
+                  2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 
+                  2014, 2015, 2016, 2017, 2018, 2019, 2020)
     
-        empty_dataframe = empty_dataframe.append(sm_year_mean)
-    
+    column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
+
+    for year in years_list:
+
+        sm_year = soil_moisture_dataframe[soil_moisture_dataframe["year"] == year]
+
+        # Ensure that there is enough data for each year before mean is calculated
+        if sm_year['day'].size > 275:
+            
+            # Missing/NaN data cleaning
+            yearly_nan_analysis(sm_year)
+            
+            sm_year_mean = sm_year.groupby(
+                                    ["year"])[["sm_5cm", "sm_10cm", 
+                                               "sm_20cm", "sm_50cm", 
+                                               "sm_100cm"]].mean()
+
+            empty_dataframe = empty_dataframe.append(sm_year_mean)
+
+        else:
+            data = {'sm_5cm':[np.nan], 'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+            filler_nan_df = pd.DataFrame(data, index=[year])
+            empty_dataframe = empty_dataframe.append(filler_nan_df)
+            print(year,': This year did not contain enough data and was set as NaN')
+            
     return empty_dataframe
 
 
-# In[8]:
+# In[9]:
 
 
 # Function that takes an input SM dataframe and returns a dataframe displaying yearly average SM for a specified month
@@ -341,7 +370,7 @@ def yearly_mean_month(soil_moisture_dataframe, month_name):
     return sm_year_month_mean
 
 
-# In[9]:
+# In[10]:
 
 
 # Function to take an input SM dataframe and calculate monthly average SM for each depth across one specific year
@@ -380,7 +409,7 @@ def monthly_mean(soil_moisture_dataframe, year):
     return station_sm_monthly_mean
 
 
-# In[10]:
+# In[11]:
 
 
 # Function that takes an input dataframe and calculates monthly mean SM across all years of data
@@ -414,7 +443,7 @@ def monthly_mean_all_years(soil_moisture_dataframe):
     return monthly_sm_mean
 
 
-# In[11]:
+# In[12]:
 
 
 def daily_avg(soil_moisture_dataframe, year):
@@ -445,7 +474,7 @@ def daily_avg(soil_moisture_dataframe, year):
     return sm_daily_avg_year
 
 
-# In[12]:
+# In[13]:
 
 
 def daily_avg_all_years(soil_moisture_dataframe):
@@ -475,7 +504,7 @@ def daily_avg_all_years(soil_moisture_dataframe):
     return sm_year_daily_all_years
 
 
-# In[13]:
+# In[14]:
 
 
 def decad_mean(dataframe, year):
@@ -496,7 +525,7 @@ def decad_mean(dataframe, year):
     return decad_func_dataframe
 
 
-# In[14]:
+# In[15]:
 
 
 def pentad_mean(dataframe, year):
@@ -517,7 +546,7 @@ def pentad_mean(dataframe, year):
     return pentad_func_dataframe
 
 
-# In[15]:
+# In[16]:
 
 
 def zscore_plot(dataframe, timescale, title):
@@ -586,7 +615,7 @@ def zscore_plot(dataframe, timescale, title):
     plt.show()
     
     
-# In[16]:
+# In[17]:
 
 
 def monthly_mean_zscore(dataframe, year):
@@ -618,3 +647,17 @@ def monthly_mean_zscore(dataframe, year):
     monthly_mean_zscore_df = monthly_mean_zscore_df.set_index('month')
 
     return monthly_mean_zscore_df
+
+
+# In[18]:
+
+
+# Loop through each column to detect and replace columns with NaN values if NaN values exceed 50% of monthly data
+def monthly_nan_analysis(dataframe):
+    
+    column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
+    
+    for column in column_names:
+        
+        if not dataframe[column].isna().sum() < 16:
+            dataframe[column] = dataframe[column].where(dataframe[column].isna(), np.nan)
