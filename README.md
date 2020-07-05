@@ -47,7 +47,7 @@ In-Situ soil moisture data has not been widely incorporated into research and mo
 * Z-Score standardized plots for each of the above
 
 ### Steps on How to Run This Workflow
-
+___
 **A GitHub Account is required to run this workflow correctly**
 
 **Packages needed to run this notebook:**
