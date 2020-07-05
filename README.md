@@ -26,7 +26,7 @@ In-Situ soil moisture data has not been widely incorporated into research and mo
 
 ### Overview of Workflow:
 #### Input: 
-* URL(s) to .csv files that contain soil moisture data from SCAN (<a href="http://nationalsoilmoisture.com/test/VWC_QAQC/scan/" target="_blank">SCAN data</a>.
+* URL(s) to .csv files that contain soil moisture data from SCAN (<a href="http://nationalsoilmoisture.com/test/VWC_QAQC/scan/" target="_blank">SCAN soil moisture dataset</a>).
 * Name of station associated with each url (Ex. Station 2006 = Bushland #2006)
 
 #### Output:
