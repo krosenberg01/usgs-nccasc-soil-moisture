@@ -92,3 +92,5 @@ LICENSE = BSD-3 Clause license detailing legal use of this code.
 README.md = ReadMe file detailing the purpose and use of this repository.
 
 usgs-nccasc-soil-moisture = .ipynb Jupyter Notebook file containing code to download, import, and process SCAN soil moisture datasets.
+
+Soil-Moisture-Blog.html = Blog post for this project, outlining motivation, goals, methods, and findings.
