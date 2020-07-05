@@ -19,55 +19,12 @@ import numpy as np
 # In[2]:
 
 
-# # Define function to take in a url and output a dataframe into a target dictionary
-# def url_to_df(url, station_name, dictionary):
-#     """Function that takes a url to a csv file and downloads and 
-#     imports the data contained at the url. Then, it changes the station name 
-#     in the new dataframe to an input name given (ideally the name of the station),
-#     removes any unnecessary columns of data, and changes the month names from int 
-#     to str month name format.
+# This list should be updated every year; these are the years the code will examine!
+years_list_all = (1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 
+                  2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 
+                  2014, 2015, 2016, 2017, 2018, 2019, 2020)
 
-#         Parameters
-#         ----------
-#         url : url to csv file
-#             Input url to a csv file.
-
-#         station_name : str
-#             Name of the station for the data being imported and downloaded.
-
-#         dictionary : dictionary
-#             Empty dictionary for the created dataframes to be exported to.
-
-#         Returns
-#         ------
-#         No physical return; Returns any newly created dataframes to the input 
-#         empty dictionary specified.
-#     """
-    
-#     path_to_data = os.path.join(et.data.get_data(url=url))
-    
-#     dataframe = pd.read_csv(path_to_data)
-    
-#     dataframe['Station ID'] = station_name
-    
-#     output_dataframe = dataframe[['Station ID', 'year', 'month', 'day', 'doy',
-#                                   'sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']]
-    
-#     output_dataframe['month'].replace({1: "Jan", 2: "Feb", 3: "Mar", 
-#                                   4: "Apr", 5: "May", 6: "Jun", 
-#                                   7: "Jul", 8: "Aug", 9: "Sep", 
-#                                   10: "Oct", 11: "Nov", 12: "Dec"}, 
-#                                  inplace=True)
-    
-#     cut_labels = ['decad0', 'decad1', 'decad2']
-#     cut_bins = [0, 10, 20, 31]
-#     output_dataframe['decad'] = pd.cut(output_dataframe['day'], bins=cut_bins, labels=cut_labels)
-    
-#     cut_labels = ['pentad0', 'pentad1', 'pentad2', 'pentad3', 'pentad4', 'pentad5']
-#     cut_bins = [0, 5, 10, 15, 20, 25, 31]
-#     output_dataframe['pentad'] = pd.cut(output_dataframe['day'], bins=cut_bins, labels=cut_labels)
-    
-#     dictionary.update({station_name: output_dataframe})
+month_list_all = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
 
 
 # In[3]:
@@ -304,9 +261,7 @@ def yearly_avg_sm(soil_moisture_dataframe):
     
     empty_dataframe = pd.DataFrame()
 
-    years_list = (1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 
-                  2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 
-                  2014, 2015, 2016, 2017, 2018, 2019, 2020)
+    years_list = years_list_all
     
     column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
 
@@ -339,6 +294,20 @@ def yearly_avg_sm(soil_moisture_dataframe):
 # In[9]:
 
 
+# Loop through each column to detect and replace columns with NaN values if NaN values exceed 50% of monthly data
+def monthly_nan_analysis(dataframe):
+    
+    column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
+    
+    for column in column_names:
+        
+        if not dataframe[column].isna().sum() < 16:
+            dataframe[column] = dataframe[column].where(dataframe[column].isna(), np.nan)
+
+
+# In[10]:
+
+
 # Function that takes an input SM dataframe and returns a dataframe displaying yearly average SM for a specified month
 def yearly_mean_month(soil_moisture_dataframe, month_name):
     """Function that takes an input dataframe and specified month name 
@@ -362,15 +331,37 @@ def yearly_mean_month(soil_moisture_dataframe, month_name):
 
     """
     
-    sm_year_month = soil_moisture_dataframe[soil_moisture_dataframe["month"] == month_name]
+    empty_year_month_dataframe = pd.DataFrame()
+    
+    years_list = years_list_all
+    
+    sm_month = soil_moisture_dataframe[soil_moisture_dataframe["month"] == month_name]
+    
+    # Ensure there is enough data for mean calculation
+    for year in years_list:
+        
+        sm_year_month = sm_month[sm_month["year"] == year]
+        
+        if sm_year_month['day'].size > 15:
+            
+            # Missing/NaN data cleaning
+            monthly_nan_analysis(sm_year_month)
+            
+            sm_year_month_mean = sm_year_month.groupby(
+                ["year"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+            
+            empty_year_month_dataframe = empty_year_month_dataframe.append(sm_year_month_mean)
+            
+        else:
+            data = {'sm_5cm':[np.nan], 'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+            filler_nan_df = pd.DataFrame(data, index=[year])
+            empty_year_month_dataframe = empty_year_month_dataframe.append(filler_nan_df)
+            print(month_name, year, ': Did not contain enough data and was set as NaN')
 
-    sm_year_month_mean = sm_year_month.groupby(
-        ["year"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
-
-    return sm_year_month_mean
+    return empty_year_month_dataframe
 
 
-# In[10]:
+# In[11]:
 
 
 # Function to take an input SM dataframe and calculate monthly average SM for each depth across one specific year
@@ -396,20 +387,37 @@ def monthly_mean(soil_moisture_dataframe, year):
 
     """
     
-    station_sm_monthly_mean = soil_moisture_dataframe[soil_moisture_dataframe["year"] == year]
-
-    station_sm_monthly_mean = station_sm_monthly_mean.groupby(
-        ["month"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+    station_sm_monthly_mean = pd.DataFrame()
     
-    # Reindex dataframe to put month names in order
-    station_sm_monthly_mean = station_sm_monthly_mean.reindex(
-    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-     'Oct', 'Nov', 'Dec'])
+    month_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+    
+    # Select year of analysis
+    station_sm_year = soil_moisture_dataframe[soil_moisture_dataframe["year"] == year]
+
+    # Loop through each month of the year to examine NaN or missing values
+    for month in month_list:
+        
+        station_sm_year_month = station_sm_year[station_sm_year["month"] == month]
+        
+        if station_sm_year_month['day'].size > 15:
+            
+            monthly_nan_analysis(station_sm_year_month)
+    
+            station_sm_monthly_avg = station_sm_year_month.groupby(
+                ["month"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+        
+            station_sm_monthly_mean = station_sm_monthly_mean.append(station_sm_monthly_avg)
+            
+        else:
+            data = {'sm_5cm':[np.nan], 'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+            filler_nan_df = pd.DataFrame(data, index=[month])
+            station_sm_monthly_mean = station_sm_monthly_mean.append(filler_nan_df)
+            print(month, year, ': Did not contain enough data and was set as NaN')
     
     return station_sm_monthly_mean
 
 
-# In[11]:
+# In[12]:
 
 
 # Function that takes an input dataframe and calculates monthly mean SM across all years of data
@@ -443,7 +451,7 @@ def monthly_mean_all_years(soil_moisture_dataframe):
     return monthly_sm_mean
 
 
-# In[12]:
+# In[13]:
 
 
 def daily_avg(soil_moisture_dataframe, year):
@@ -474,7 +482,7 @@ def daily_avg(soil_moisture_dataframe, year):
     return sm_daily_avg_year
 
 
-# In[13]:
+# In[14]:
 
 
 def daily_avg_all_years(soil_moisture_dataframe):
@@ -504,49 +512,144 @@ def daily_avg_all_years(soil_moisture_dataframe):
     return sm_year_daily_all_years
 
 
-# In[14]:
+# In[15]:
 
 
-def decad_mean(dataframe, year):
-    months_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+def decad_nan_analysis(dataframe):
     
-    decad_df_year = dataframe[dataframe["year"] == year]
+    column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
     
-    decad_func_dataframe = pd.DataFrame()
-
-    for month in months_list:
-        filler_decad_df = decad_df_year[decad_df_year["month"] == month]
-
-        filler_decad_mean_df = filler_decad_df.groupby(["month", "decad"])[["sm_5cm", "sm_10cm", 
-                                                                   "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
-
-        decad_func_dataframe = decad_func_dataframe.append(filler_decad_mean_df)
+    for column in column_names:
         
-    return decad_func_dataframe
+        if not dataframe[column].isna().sum() < 5:
+            dataframe[column] = dataframe[column].where(dataframe[column].isna(), np.nan)
 
 
 # In[15]:
 
 
-def pentad_mean(dataframe, year):
+def decad_mean(dataframe, year):
+    
     month_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+    dec_list = ['decad0', 'decad1', 'decad2']
     
-    pentad_df_year = dataframe[dataframe["year"] == year]
+    empty_year_dec_mean_df = pd.DataFrame()
     
-    pentad_func_dataframe = pd.DataFrame()
-
+    station_sm_year_dec = dataframe[dataframe['year'] == year]
+    
     for month in month_list:
-        filler_pentad_df = pentad_df_year[pentad_df_year["month"] == month]
-
-        filler_pentad_mean_df = filler_pentad_df.groupby(["month", "pentad"])[["sm_5cm", "sm_10cm", 
-                                                                   "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
-
-        pentad_func_dataframe = pentad_func_dataframe.append(filler_pentad_mean_df)
         
-    return pentad_func_dataframe
+        station_sm_month_dec = station_sm_year_dec[station_sm_year_dec['month'] == month]
+    
+        for decad in dec_list:
+            
+            station_sm_year_month_dec = station_sm_month_dec[station_sm_month_dec['decad'] == decad]
+            
+            # Ensure each decad of each month has enough data to provide an accurate mean
+            if station_sm_year_month_dec['decad'].size > 4:
+            
+                # NaN analysis
+                decad_nan_analysis(station_sm_year_month_dec)
+
+                # Calculate mean
+                filler_decad_mean_df = station_sm_year_month_dec.groupby(["month"])[["sm_5cm", "sm_10cm", 
+                                                                                "sm_20cm", "sm_50cm", 
+                                                                                "sm_100cm"]].mean()
+
+                # Clean columns
+                filler_decad_mean_df = filler_decad_mean_df.reset_index()
+                filler_decad_mean_df.insert(0, "year", [year], True)
+                filler_decad_mean_df.insert(2, "decad", [decad], True)
+
+                empty_year_dec_mean_df = empty_year_dec_mean_df.append(filler_decad_mean_df)
+                
+            # If a decad of a month does not contain enough data, append a row with only NaN values   
+            else:
+                data = {'year': [year], 'month':[month], 'decad':[decad], 'sm_5cm':[np.nan], 
+                        'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+                
+                filler_nan_df = pd.DataFrame(data)
+                
+                empty_year_dec_mean_df = empty_year_dec_mean_df.append(filler_nan_df)
+                
+                #print(year, month, decad, ': Did not contain enough data and was set as NaN')
+    
+    # Column/Index management
+    #empty_year_dec_mean_df = empty_year_dec_mean_df.set_index('year')
+    
+    return empty_year_dec_mean_df
 
 
 # In[16]:
+
+
+def pentad_nan_analysis(dataframe):
+    
+    column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
+    
+    for column in column_names:
+        
+        if not dataframe[column].isna().sum() < 3:
+            dataframe[column] = dataframe[column].where(dataframe[column].isna(), np.nan)
+
+
+# In[16]:
+
+
+def pentad_mean(dataframe, year):
+    
+    month_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+    pent_list = ['pentad0', 'pentad1', 'pentad2', 'pentad3', 'pentad4', 'pentad5']
+    
+    empty_year_pent_mean_df = pd.DataFrame()
+    
+    station_sm_year_pent = dataframe[dataframe['year'] == year]
+    
+    for month in month_list:
+        
+        station_sm_month_pent = station_sm_year_pent[station_sm_year_pent['month'] == month]
+    
+        for pentad in pent_list:
+            
+            station_sm_year_month_pent = station_sm_month_pent[station_sm_month_pent['pentad'] == pentad]
+            
+            # Ensure each pentad of each month has enough data to provide an accurate mean
+            if station_sm_year_month_pent['pentad'].size > 2:
+            
+                # NaN analysis
+                pentad_nan_analysis(station_sm_year_month_pent)
+
+                # Calculate mean
+                filler_pentad_mean_df = station_sm_year_month_pent.groupby(["month"])[["sm_5cm", "sm_10cm", 
+                                                                                "sm_20cm", "sm_50cm", 
+                                                                                "sm_100cm"]].mean()
+
+                # Clean columns
+                filler_pentad_mean_df = filler_pentad_mean_df.reset_index()
+                filler_pentad_mean_df.insert(0, "year", [year], True)
+                filler_pentad_mean_df.insert(2, "pentad", [pentad], True)
+
+                empty_year_pent_mean_df = empty_year_pent_mean_df.append(filler_pentad_mean_df)
+                
+            # If a pentad of a month does not contain enough data, append a row with only NaN values   
+            else:
+                data = {'year': [year], 'month':[month], 'pentad':[pentad], 'sm_5cm':[np.nan], 
+                        'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+                
+                filler_nan_pent_df = pd.DataFrame(data)
+                
+                empty_year_pent_mean_df = empty_year_pent_mean_df.append(filler_nan_pent_df)
+                
+                #print(year, month, pentad, ': Did not contain enough data and was set as NaN')
+    
+    # Column/Index management
+    #empty_year_pent_mean_df = empty_year_pent_mean_df.set_index('year')
+    
+    
+    return empty_year_pent_mean_df
+
+
+# In[17]:
 
 
 def zscore_plot(dataframe, timescale, title):
@@ -615,49 +718,62 @@ def zscore_plot(dataframe, timescale, title):
     plt.show()
     
     
-# In[17]:
+# In[18]:
 
 
 def monthly_mean_zscore(dataframe, year):
+    
+    month_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
 
-    month_list = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+    years_list_all = (1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 
+                      2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 
+                      2014, 2015, 2016, 2017, 2018, 2019, 2020)
 
     monthly_mean_zscore_df = pd.DataFrame()
+    station_nan_cleaned_mean_df = pd.DataFrame()
 
     for month in month_list:
 
-        station_sm = dataframe
+        station_sm_month = dataframe[dataframe["month"] == month]
 
-        station_sm_month = station_sm[station_sm["month"] == month]
+        for x in years_list_all:
 
-        station_sm_month_mean = station_sm_month.groupby(
-            ["year"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+            station_sm_month_year = station_sm_month[station_sm_month["year"] == x]
+
+            if station_sm_month_year['day'].size > 15:
+
+                monthly_nan_analysis(station_sm_month_year)
+
+                station_sm_month_year_mean = station_sm_month_year.groupby(
+                                ["month"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+
+                station_sm_month_year_mean.insert(0, "year", [x], True)
+
+                station_nan_cleaned_mean_df = station_nan_cleaned_mean_df.append(station_sm_month_year_mean)
+
+            else:
+                data = {'year': [x], 'sm_5cm':[np.nan], 'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+                filler_nan_df = pd.DataFrame(data, index=[month])
+                station_nan_cleaned_mean_df = station_nan_cleaned_mean_df.append(filler_nan_df)
+                #print(month, x, ': Did not contain enough data and was set as NaN')
+    
+    for y in month_list:
+                
+        station_cleaned_month_mean = station_nan_cleaned_mean_df[station_nan_cleaned_mean_df.index.values == y]
+
+        station_sm_month_mean = station_cleaned_month_mean.groupby(
+                    ["year"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
 
         station_month_zscore = station_sm_month_mean.apply(zscore, nan_policy='omit')
 
         station_month_zscore_year = station_month_zscore[station_month_zscore.index.values == year]
-
-        station_month_zscore_year.insert(0, "month", [month], True)
-
+        
+        station_month_zscore_year.insert(0, "month", [y], True)
+        
         monthly_mean_zscore_df = monthly_mean_zscore_df.append(station_month_zscore_year)
-
+        
     monthly_mean_zscore_df = monthly_mean_zscore_df.reset_index()
 
     monthly_mean_zscore_df = monthly_mean_zscore_df.set_index('month')
-
+                
     return monthly_mean_zscore_df
-
-
-# In[18]:
-
-
-# Loop through each column to detect and replace columns with NaN values if NaN values exceed 50% of monthly data
-def monthly_nan_analysis(dataframe):
-    
-    column_names = ['sm_5cm', 'sm_10cm', 'sm_20cm', 'sm_50cm', 'sm_100cm']
-    
-    for column in column_names:
-        
-        if not dataframe[column].isna().sum() < 16:
-            dataframe[column] = dataframe[column].where(dataframe[column].isna(), np.nan)
