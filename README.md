@@ -11,7 +11,7 @@ Automated tool (Jupyter Notebook) to examine soil moisture datasets for Soil Cli
 * **Leah Wasser, Ph.D.** Earth Analytics Education Initiative Director, University of Colorado-Boulder, Earth Lab. https://www.colorado.edu/earthlab/people/leah-wasser
 
 ## Purpose of this Code?
-This repository contains a project in collaboration with researchers from the U.S. Geological Survey and the North Central Climate Adaptation Science Center regarding access to soil moisture datasets from various Soil Climate Analysis Network (<a href="https://www.wcc.nrcs.usda.gov/scan/" target="_blank">SCAN website</a>) stations across the US.  These stations are included in the broader national network of soil moisture monitoring stations: the National Soil Moisture Network (<a href="http://nationalsoilmoisture.com/" target="_blank">SCAN website</a>).
+This repository contains a project in collaboration with researchers from the U.S. Geological Survey and the North Central Climate Adaptation Science Center regarding access to soil moisture datasets from various Soil Climate Analysis Network (<a href="https://www.wcc.nrcs.usda.gov/scan/" target="_blank">SCAN website</a>) stations across the US.  These stations are included in the broader national network of soil moisture monitoring stations: the National Soil Moisture Network (<a href="http://nationalsoilmoisture.com/" target="_blank">NSMN website</a>).
 
 The notebook contained in this repository allows the user to download soil moisture datasets from an input URL an examine them on different timescales (Annual, Monthly, Daily, Weekly).  Outputs include CSV files for Annual/Monthly/Daily/Weekly mean values and Z-Score analysis values for each in addition to plots for all of the above.
 
