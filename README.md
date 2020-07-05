@@ -62,11 +62,11 @@ ___
 
 **Follow the below instructions to use Earth Lab's custom environment that contains all needed packages:**
 
-1. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to download and install Bash, Git, and Minicoda to your computer (https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/).  Instructions vary based on operating system!
+1. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to download and install Bash, Git, and Minicoda to your computer <a href="https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/" target="_blank">here</a>.  Instructions vary based on operating system!
 
 2. Create an earth-analytics directory on your computer.  This can be done by running the line **mkdir earth-analytics** in your terminal
 
-3. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to install and activate an environment titled "earth-analytics-python" for use in running this notebook (https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/).  This ensures that all needed imports and packages are available for use on your computer.
+3. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to install and activate an environment titled "earth-analytics-python" for use in running this notebook (<a href="https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/" target="_blank">here</a>.  This ensures that all needed imports and packages are available for use on your computer.
 
 4. Fork this repository to your personal GitHub account.  Clone this forked repository (click the green clone option on your forked repository) to obtain a link for use in step 10 below.
 
