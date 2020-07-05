@@ -85,18 +85,19 @@ In-Situ soil moisture data has not been widely incorporated into research and mo
 10. In this new terminal, run the line **cd earth-analytics** to enter into your earth-analytics directory, and then run the line **git clone** followed by the url generated from forking and cloning this repository.  This will place the full repository into your "earth-analytics" folder for use.  Now you are ready to begin running the notebook!
 
 ## Files Included in this Repository:
-.gitignore = file detailing python files that we do not want git to track, notably automatically generated files such as .ipynb_checkpoints.
+___
+**.gitignore** = file detailing python files that we do not want git to track, notably automatically generated files such as .ipynb_checkpoints.
 
-LICENSE = BSD-3 Clause license detailing legal use of this code.
+**LICENSE** = BSD-3 Clause license detailing legal use of this code.
 
-README.md = ReadMe file detailing the purpose and use of this repository.
+**README.md** = ReadMe file detailing the purpose and use of this repository.
 
-customfunctions.py = python script containing all the custom functions used in this project.
+**customfunctions.py** = python script containing all the custom functions used in this project.
 
-imports.py = python script containing all the import data code for this project.  To add further SCAN stations for analysis, this is the script that should be modified to show that prior to running the Jupyter Notebook tool.
+**imports.py** = python script containing all the import data code for this project.  To add further SCAN stations for analysis, this is the script that should be modified to show that prior to running the Jupyter Notebook tool.
 
-usgs-nccasc-soil-moisture = .ipynb Jupyter Notebook file containing code to download, import, and process SCAN soil moisture datasets.
+**usgs-nccasc-soil-moisture** = .ipynb Jupyter Notebook file containing code to download, import, and process SCAN soil moisture datasets.
 
-Soil-Moisture-Blog.html = Blog post for this project, outlining motivation, goals, methods, and findings.
+**Soil-Moisture-Blog.html** = Blog post for this project, outlining motivation, goals, methods, and findings.
 
-Presentation-Slides.pptx = Slides used in presentation to Earth Analytics class.
+**Presentation-Slides.pptx** = Slides used in presentation to Earth Analytics class.
