@@ -16,7 +16,7 @@ This repository contains a project in collaboration with researchers from the U.
 The notebook contained in this repository allows the user to download soil moisture datasets from an input URL an examine them on different timescales (Annual, Monthly, Daily, Weekly).  Outputs include CSV files for Annual/Monthly/Daily/Weekly mean values and Z-Score analysis values for each in addition to plots for all of the above.
 
 ## Goals and Motivation
-In-Situ soil moisture data has not been widely incorporated into research and models because of the relative newness of its historical collection.  By creating an easy access tool to examine the data of different timescales, we hope to accomplish two things:
+In-Situ soil moisture data has not been widely incorporated into research and models because of the relative newness of its historical collection.  The data is publicly available for use, but actually breaking down and examining relationships regarding soil moisture data is tedious and can be a impediment to its incorporation into the scientific world.  The motivation behind the creation of this tool is to allow researchers interested in soil moisture to easily be able to extract and examine relationships on different timescales, depths, and geographic locations (differring environments).  In the creation of this easy access tool to examine soil moisture data across different timescales, we accomplish two things:
 
 1) Publicly publish this tool so that access to in-situ soil moisture data on different timescales is readily available for environmental condition models (drought, flood, water management, etc.) and is available for use in research going forward.
 
@@ -83,6 +83,26 @@ ___
 9. Click **New** in the toolbar and select **terminal**
 
 10. In this new terminal, run the line **cd earth-analytics** to enter into your earth-analytics directory, and then run the line **git clone** followed by the url generated from forking and cloning this repository.  This will place the full repository into your "earth-analytics" folder for use.  Now you are ready to begin running the notebook!
+
+## Stations included in this analysis
+
+1. Bushland, Texas
+2. Nunn, Colorado
+3. Ft. Assiniboine, Montana
+4. Mandan, North Dakota
+5. Lind, Washington
+6. Beasley Lake, Mississippi
+7. Eastview Farm, Tennessee
+8. Mammoth Cave, Kentucky
+9. Abrams, Kansas
+
+**Note:** Other SCAN stations can be examined, but an input url and station name must be inserted into the **imports.py** file before running the notebook.
+
+## Future Work / Future Studies:
+
+**Compare with drought indices to examine relationships:** Create a workflow in Python to examine the relationships of the standardized SM data at different depths with select drought indices such as LERI, PDSI, SPEI, EDDI as a time series analysis.  This drought index data can be examined easily using a tool from the University of Colorado, Boulder <a href="https://droughtindexportal.colorado.edu/" target="_blank">here</a>
+
+**Examine relationships between soil moisture trends at different depths with related environmental phenomena:** Compare soil moisture trends at different depths with other natural factors to examine correlation!  One suggestion was that very shallow (2cm) measurements can be useful to help calibrate/verify satellite measurements of soil moisture, 5cm and 10cm could give insight into available water at the root zone (for plant use; agricultural use), 20cm and 50cm could give insight into local streamflow characteristics, and finally, 100cm depth measurements could be useful as an indication of drought intensity.  Perhaps this data could be applied/correlated to each of these parameters to see what the relation is using true in-situ soil moisture data!
 
 ## Files Included in this Repository:
 ___
