@@ -26,7 +26,7 @@ In-Situ soil moisture data has not been widely incorporated into research and mo
 
 ### Overview of Workflow:
 #### Input: 
-* URL(s) to .csv files that contain soil moisture data from SCAN (http://nationalsoilmoisture.com/test/VWC_QAQC/scan/).
+* URL(s) to .csv files that contain soil moisture data from SCAN (<a href="http://nationalsoilmoisture.com/test/VWC_QAQC/scan/" target="_blank">SCAN data</a>.
 * Name of station associated with each url (Ex. Station 2006 = Bushland #2006)
 
 #### Output:
@@ -66,7 +66,7 @@ ___
 
 2. Create an earth-analytics directory on your computer.  This can be done by running the line **mkdir earth-analytics** in your terminal
 
-3. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to install and activate an environment titled "earth-analytics-python" for use in running this notebook (<a href="https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/" target="_blank">here</a>.  This ensures that all needed imports and packages are available for use on your computer.
+3. Follow instructions provided by the Earth Lab at the University of Colorado, Boulder to install and activate an environment titled "earth-analytics-python" for use in running this notebook <a href="https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-python-conda-earth-analytics-environment/" target="_blank">here</a>.  This ensures that all needed imports and packages are available for use on your computer.
 
 4. Fork this repository to your personal GitHub account.  Clone this forked repository (click the green clone option on your forked repository) to obtain a link for use in step 10 below.
 
