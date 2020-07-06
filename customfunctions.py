@@ -521,7 +521,7 @@ def decad_nan_analysis(dataframe):
     
     for column in column_names:
         
-        if not dataframe[column].isna().sum() < 5:
+        if not dataframe[column].isna().sum() < 6:
             dataframe[column] = dataframe[column].where(dataframe[column].isna(), np.nan)
 
 
@@ -546,7 +546,7 @@ def decad_mean(dataframe, year):
             station_sm_year_month_dec = station_sm_month_dec[station_sm_month_dec['decad'] == decad]
             
             # Ensure each decad of each month has enough data to provide an accurate mean
-            if station_sm_year_month_dec['decad'].size > 4:
+            if station_sm_year_month_dec['decad'].size > 5:
             
                 # NaN analysis
                 decad_nan_analysis(station_sm_year_month_dec)
@@ -578,6 +578,71 @@ def decad_mean(dataframe, year):
     #empty_year_dec_mean_df = empty_year_dec_mean_df.set_index('year')
     
     return empty_year_dec_mean_df
+
+
+# In[16]:
+
+
+def decad_zscore(dataframe, year):
+
+    # Lists needed for loops
+    dec_list = ['decad0', 'decad1', 'decad2']
+    years_list_all = (1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 
+                      2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 
+                      2014, 2015, 2016, 2017, 2018, 2019, 2020)
+    month_list_all = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+
+    # Create empty dataframes for temporary use in the function
+    empty_df1 = pd.DataFrame()
+    final_year_zscore_df = pd.DataFrame()
+
+    for month in month_list_all:
+
+        station_sm_month = dataframe[dataframe["month"] == month]
+
+        for decad in dec_list:
+
+            station_sm_month_dec = station_sm_month[station_sm_month['decad'] == decad]
+
+            for item in years_list_all:
+                station_sm_month_dec_year = station_sm_month_dec[station_sm_month_dec["year"] == item]
+
+                if station_sm_month_dec_year['year'].size > 5:
+                    
+                    # NaN analysis
+                    decad_nan_analysis(station_sm_month_dec_year)
+
+                    filler_decad_mean_df = station_sm_month_dec_year.groupby(["month"])[["sm_5cm", "sm_10cm", 
+                                                                                            "sm_20cm", "sm_50cm", 
+                                                                                            "sm_100cm"]].mean()
+                    # Clean columns
+                    filler_decad_mean_df = filler_decad_mean_df.reset_index()
+                    filler_decad_mean_df.insert(0, "year", [item], True)
+                    filler_decad_mean_df.insert(2, "decad", [decad], True)
+
+                    empty_df1 = empty_df1.append(filler_decad_mean_df)
+                    
+                # If the year does not contain enough data to make calculations, set that year as NaN
+                else:
+                    data = {'year': [item], 'month':[month], 'decad':[decad], 'sm_5cm':[np.nan], 
+                                    'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+
+                    filler_nan_df = pd.DataFrame(data)
+
+                    empty_df1 = empty_df1.append(filler_nan_df)
+
+            # Z-Score analysis
+            empty_df1 = empty_df1.groupby(["year"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+            empty_df1_zscore = empty_df1.apply(zscore, nan_policy='omit')
+
+            # Create new dataframe of calculated z-scores for desired year
+            zscore_month_dec_year = empty_df1_zscore[empty_df1_zscore.index.values == year]
+            zscore_month_dec_year.insert(0, "month", [month], True)
+            zscore_month_dec_year.insert(1, "decad", [decad], True)
+
+            final_year_zscore_df = final_year_zscore_df.append(zscore_month_dec_year)
+
+    return final_year_zscore_df
 
 
 # In[16]:
@@ -647,6 +712,71 @@ def pentad_mean(dataframe, year):
     
     
     return empty_year_pent_mean_df
+
+
+# In[17]:
+
+
+def pentad_zscore(dataframe, year):
+
+    # Lists needed for loops
+    pent_list = ['pentad0', 'pentad1', 'pentad2', 'pentad3', 'pentad4', 'pentad5']
+    years_list_all = (1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 
+                      2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 
+                      2014, 2015, 2016, 2017, 2018, 2019, 2020)
+    month_list_all = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+
+    # Create empty dataframes for temporary use in the function
+    empty_df2 = pd.DataFrame()
+    final_pent_year_zscore_df = pd.DataFrame()
+
+    for month in month_list_all:
+
+        station_sm_month = dataframe[dataframe["month"] == month]
+
+        for pentad in pent_list:
+
+            station_sm_month_pent = station_sm_month[station_sm_month['pentad'] == pentad]
+
+            for item in years_list_all:
+                station_sm_month_pent_year = station_sm_month_pent[station_sm_month_pent["year"] == item]
+
+                if station_sm_month_pent_year['year'].size > 2:
+                    
+                    # NaN analysis
+                    pentad_nan_analysis(station_sm_month_pent_year)
+
+                    filler_pentad_mean_df = station_sm_month_pent_year.groupby(["month"])[["sm_5cm", "sm_10cm", 
+                                                                                            "sm_20cm", "sm_50cm", 
+                                                                                            "sm_100cm"]].mean()
+                    # Clean columns
+                    filler_pentad_mean_df = filler_pentad_mean_df.reset_index()
+                    filler_pentad_mean_df.insert(0, "year", [item], True)
+                    filler_pentad_mean_df.insert(2, "pentad", [pentad], True)
+
+                    empty_df2 = empty_df2.append(filler_pentad_mean_df)
+                    
+                # If the year does not contain enough data to make calculations, set that year as NaN
+                else:
+                    data = {'year': [item], 'month':[month], 'pentad':[pentad], 'sm_5cm':[np.nan], 
+                                    'sm_10cm':[np.nan], 'sm_20cm':[np.nan], 'sm_50cm':[np.nan], 'sm_100cm':[np.nan]}
+
+                    filler_nan_df = pd.DataFrame(data)
+
+                    empty_df2 = empty_df2.append(filler_nan_df)
+
+            # Z-Score analysis
+            empty_df2 = empty_df2.groupby(["year"])[["sm_5cm", "sm_10cm", "sm_20cm", "sm_50cm", "sm_100cm"]].mean()
+            empty_df2_zscore = empty_df2.apply(zscore, nan_policy='omit')
+
+            # Create new dataframe of calculated z-scores for desired year
+            zscore_month_pent_year = empty_df2_zscore[empty_df2_zscore.index.values == year]
+            zscore_month_pent_year.insert(0, "month", [month], True)
+            zscore_month_pent_year.insert(1, "pentad", [pentad], True)
+
+            final_pent_year_zscore_df = final_pent_year_zscore_df.append(zscore_month_pent_year)
+
+    return final_pent_year_zscore_df
 
 
 # In[17]:
